@@ -1,0 +1,7 @@
+kenya_health:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', 'data/kenya_health.duckdb') }}"
+      threads: 2

@@ -1,0 +1,120 @@
+version: 2
+
+models:
+  - name: stg_facilities
+    description: "Cleaned Kenya MOH health facility data with standardised facility types and KEPH levels."
+    columns:
+      - name: facility_id
+        description: "Stable hash-based facility identifier"
+        tests:
+          - not_null
+          - unique
+      - name: facility_name
+        description: "Official facility name"
+        tests:
+          - not_null
+      - name: facility_type
+        description: "Standardised facility type"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - "Dispensary"
+                  - "Health Centre"
+                  - "Hospital"
+                  - "Medical Clinic"
+                  - "Nursing Home"
+                  - "Maternity Home"
+                  - "Eye Clinic"
+                  - "Dental Clinic"
+                  - "Radiology Clinic"
+                  - "Laboratory"
+                  - "Pharmacy"
+                  - "Other"
+      - name: facility_level
+        description: "KEPH level (2-6)"
+        tests:
+          - not_null
+      - name: county
+        description: "County name (canonical)"
+        tests:
+          - not_null
+      - name: latitude
+        description: "Latitude (WGS84)"
+        tests:
+          - not_null
+      - name: longitude
+        description: "Longitude (WGS84)"
+        tests:
+          - not_null
+
+  - name: stg_counties
+    description: "Kenya county administrative boundaries from GADM 4.1."
+    columns:
+      - name: county_name
+        description: "County name (GADM canonical)"
+        tests:
+          - not_null
+          - unique
+      - name: area_km2
+        description: "County area in square kilometres"
+        tests:
+          - not_null
+
+  - name: stg_wb_health
+    description: "World Bank health indicators for Kenya — latest values pivoted wide."
+    columns:
+      - name: under5_mortality_rate
+        description: "Under-5 mortality rate per 1,000 live births (latest year)"
+        tests:
+          - not_null
+
+  - name: facility_coverage
+    description: "Facility counts and spatial coverage metrics per county."
+    columns:
+      - name: county_name
+        description: "County name"
+        tests:
+          - not_null
+          - unique
+      - name: coverage_ratio_10km
+        description: "Fraction of county area covered by 10km facility buffers"
+        tests:
+          - not_null
+      - name: health_access_index
+        description: "Composite health access index (0-100)"
+        tests:
+          - not_null
+
+  - name: county_health_index
+    description: "Master county health index table with WB indicators and rankings."
+    columns:
+      - name: county_name
+        description: "County name"
+        tests:
+          - not_null
+          - unique
+      - name: health_access_index
+        description: "Composite health access index (0-100)"
+        tests:
+          - not_null
+      - name: access_tier
+        description: "Qualitative access tier"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["High", "Medium", "Low", "Critical"]
+
+  - name: coverage_gaps
+    description: "Underserved counties with coverage gaps and facility needs."
+    columns:
+      - name: county_name
+        description: "County name"
+        tests:
+          - not_null
+      - name: gap_severity_score
+        description: "Gap severity score (0 = fine, higher = worse)"
+        tests:
+          - not_null

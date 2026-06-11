@@ -1,0 +1,45 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+.venv/
+venv/
+env/
+
+# Data files (large binaries)
+data/*.duckdb
+data/*.gpkg
+data/*.csv
+data/*.parquet
+data/*.json
+!data/.gitkeep
+
+# dbt artifacts
+dbt/target/
+dbt/logs/
+dbt/.user.yml
+
+# Project-private notes
+projectsummary.md
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test cache
+.pytest_cache/
+.coverage
+htmlcov/

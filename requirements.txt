@@ -1,0 +1,13 @@
+geopandas==1.0.1
+pyogrio==0.9.0
+shapely==2.0.6
+requests==2.33.0
+duckdb==1.2.2
+dbt-duckdb==1.9.2
+folium==0.19.5
+streamlit==1.45.1
+streamlit-folium==0.25.0
+pandas==2.2.3
+numpy==2.0.2
+pytest==9.0.3
+python-dotenv==1.2.2
