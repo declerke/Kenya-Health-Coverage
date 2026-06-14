@@ -72,25 +72,25 @@ Kenya Health Facility Coverage makes the county-level picture explicit. The Keny
 
 ### Coverage Map — County Choropleth + 9,992 Facility Dots
 
-![Coverage Map](assets/coverage_map.png)
+![Coverage Map](assets/health_coverage_map.png)
 
 *Dark-theme Folium choropleth with all 47 Kenya counties coloured by composite health access index (red=Critical → green=High). Facility dots rendered as GeoJSON FeatureCollections per KEPH level (L2 Dispensary through L6 National Referral). Layer controls toggle facility visibility and 10km buffer zones. Right panel: MAP LAYERS toggles and SUMMARY metric cards (Counties=47, Facilities=9,992, Underserved=4 Low-tier, Avg Index=62.2).*
 
 ### County Ranking — All 47 Counties by Health Access Index
 
-![County Ranking](assets/county_ranking.png)
+![County Ranking](assets/health_county_ranking.png)
 
 *Plotly horizontal bar chart ranking all 47 counties by composite health access index (0–100), colour-coded by tier. Donut chart shows tier distribution: High 70.2%, Medium 21.3%, Low 8.5%. Streamlit dataframes for Top 10 and Bottom 10 counties with County, Index, Tier, and Facilities columns.*
 
 ### Coverage Gaps — 10 Underserved Counties
 
-![Coverage Gaps](assets/coverage_gaps.png)
+![Coverage Gaps](assets/health_coverage_gaps.png)
 
 *Scatter plot of underserved counties: x-axis 10km coverage %, y-axis gap severity score, coloured by access tier, sized by facilities needed. Priority table lists all 10 underserved counties with Access Index, Coverage %, Facilities/100k, Nearest Hospital (km), Current Facilities, and Gap Score. Methodology note explains the gap severity formula.*
 
 ### Indicators — World Bank Health Time-Series
 
-![Indicators](assets/indicators.png)
+![Indicators](assets/health_indicators.png)
 
 *Selector for 4 World Bank health indicators (hospital beds, physicians, under-5 mortality, maternal mortality). Plotly area line chart shows historical trend for the selected indicator. Latest Value and Years of Data metric cards. Summary table with all 4 indicators, latest value, year, and source.*
 
