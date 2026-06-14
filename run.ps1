@@ -53,6 +53,9 @@ if (Test-Path $Activate) {
 # Step 2: Install dependencies
 Write-Host ""
 Write-Host "[2/7] Installing dependencies..." -ForegroundColor Cyan
+# UV_LINK_MODE=copy is required on OneDrive-backed paths (Windows) to avoid
+# cross-device link errors when uv tries to hardlink from its cache.
+$env:UV_LINK_MODE = "copy"
 uv pip install -r "$ProjectRoot\requirements.txt"
 if ($LASTEXITCODE -ne 0) { Write-Host "ERROR: dependency installation failed" -ForegroundColor Red; exit 1 }
 Write-Host "Dependencies installed." -ForegroundColor Green
@@ -95,12 +98,14 @@ Write-Host "Spatial analysis complete." -ForegroundColor Green
 # Step 7: dbt run
 Write-Host ""
 Write-Host "[7/7] Running dbt models..." -ForegroundColor Cyan
-$env:DUCKDB_PATH = "data/kenya_health.duckdb"
+# Set DUCKDB_PATH as an absolute path so dbt's env_var() resolves correctly
+# regardless of the working directory when --project-dir is used.
+$env:DUCKDB_PATH = "$ProjectRoot\data\kenya_health.duckdb"
 dbt run --project-dir "$ProjectRoot\dbt" --profiles-dir "$ProjectRoot\dbt"
 if ($LASTEXITCODE -ne 0) { Write-Host "ERROR: dbt run failed" -ForegroundColor Red; exit 1 }
 Write-Host "dbt models built." -ForegroundColor Green
 
-# Run dbt tests
+# Run dbt tests (DUCKDB_PATH already set to absolute path above)
 Write-Host ""
 Write-Host "[dbt tests] Running dbt tests..." -ForegroundColor Cyan
 dbt test --project-dir "$ProjectRoot\dbt" --profiles-dir "$ProjectRoot\dbt"

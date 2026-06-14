@@ -25,6 +25,9 @@ dbt/target/
 dbt/logs/
 dbt/.user.yml
 
+# Logs
+pipeline.log
+
 # Project-private notes
 projectsummary.md
 

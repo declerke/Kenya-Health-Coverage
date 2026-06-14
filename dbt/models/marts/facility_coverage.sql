@@ -69,10 +69,10 @@ combined as (
         coalesce(fc.referral_hospital_count, 0)          as referral_hospital_count,
         coalesce(fc.primary_care_count, 0)               as primary_care_count,
         coalesce(fc.avg_facility_level, 2.0)             as avg_facility_level,
-        coalesce(sm.coverage_ratio_10km, 0.0)            as coverage_ratio_10km,
-        coalesce(sm.facilities_per_100k, 0.0)            as facilities_per_100k,
-        coalesce(sm.nearest_hospital_km, 999.0)          as nearest_hospital_km,
-        coalesce(sm.health_access_index, 0.0)            as health_access_index,
+        sm.coverage_ratio_10km,
+        sm.facilities_per_100k,
+        sm.nearest_hospital_km,
+        sm.health_access_index,
         round(
             coalesce(fc.total_facilities, 0)::double
             / nullif(c.area_km2, 0) * 1000, 4

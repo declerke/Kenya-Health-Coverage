@@ -125,9 +125,8 @@ def load_facilities(force_download: bool = False) -> pd.DataFrame:
     actual_rename = {k: v for k, v in rename_map.items() if k in df.columns}
     df = df.rename(columns=actual_rename)
 
-    # Drop rows without GPS
+    # Drop rows without valid GPS
     before = len(df)
-    df = df.dropna(subset=["latitude", "longitude"])
     df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
     df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
     df = df.dropna(subset=["latitude", "longitude"])
@@ -141,20 +140,14 @@ def load_facilities(force_download: bool = False) -> pd.DataFrame:
     logger.info("Dropped %d rows with invalid/out-of-bounds GPS → %d remaining", before - after, after)
 
     # Normalise facility type
-    type_col = "raw_type" if "raw_type" in df.columns else "facility_type"
-    df["facility_type"] = df[type_col].apply(_normalise_type)
+    df["facility_type"] = df["raw_type"].apply(_normalise_type)
 
     # Normalise county name
-    county_col = "county_raw" if "county_raw" in df.columns else "county"
-    df["county"] = df[county_col].apply(normalise_county)
+    df["county"] = df["county_raw"].apply(normalise_county)
 
     # Assign KEPH level
-    owner_col = "owner" if "owner" in df.columns else None
     df["facility_level"] = df.apply(
-        lambda row: _assign_level(
-            row["facility_type"],
-            row[owner_col] if owner_col else "",
-        ),
+        lambda row: _assign_level(row["facility_type"], row.get("owner", "")),
         axis=1,
     )
 

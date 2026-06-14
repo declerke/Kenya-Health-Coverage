@@ -160,11 +160,10 @@ def load_wb_indicators() -> pd.DataFrame:
 
 def build_county_population_df() -> pd.DataFrame:
     """Return a DataFrame of county-level population estimates."""
-    rows = [
-        {"county_name": county, "population_2023": pop}
-        for county, pop in COUNTY_POPULATION_2023.items()
-    ]
-    df = pd.DataFrame(rows)
+    df = pd.DataFrame(
+        list(COUNTY_POPULATION_2023.items()),
+        columns=["county_name", "population_2023"],
+    )
     logger.info("County population table: %d counties", len(df))
     return df
 

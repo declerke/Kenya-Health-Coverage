@@ -40,7 +40,8 @@ source "$SCRIPT_DIR/.venv/bin/activate"
 # Step 2: Install dependencies
 echo ""
 echo "[2/7] Installing dependencies..."
-uv pip install -r "$SCRIPT_DIR/requirements.txt"
+# UV_LINK_MODE=copy avoids cross-device link errors on network-backed filesystems.
+UV_LINK_MODE=copy uv pip install -r "$SCRIPT_DIR/requirements.txt"
 echo "Dependencies installed."
 
 if [ "$DASHBOARD_ONLY" = true ]; then
@@ -77,7 +78,9 @@ echo "Spatial analysis complete."
 # Step 7: dbt run
 echo ""
 echo "[7/7] Running dbt models..."
-export DUCKDB_PATH="data/kenya_health.duckdb"
+# Use absolute path so dbt's env_var() resolves correctly when --project-dir
+# changes the effective working directory.
+export DUCKDB_PATH="$SCRIPT_DIR/data/kenya_health.duckdb"
 dbt run --project-dir "$SCRIPT_DIR/dbt" --profiles-dir "$SCRIPT_DIR/dbt"
 echo "dbt models built."
 

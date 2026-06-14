@@ -73,12 +73,12 @@ def download_file(url: str, dest: Path, force: bool = False) -> Path:
     """
     import requests
 
+    logger = get_logger(__name__)
+
     if dest.exists() and not force:
-        logger = get_logger(__name__)
         logger.info("Cache hit — skipping download: %s", dest.name)
         return dest
 
-    logger = get_logger(__name__)
     logger.info("Downloading %s → %s", url, dest.name)
 
     headers = {
@@ -91,7 +91,6 @@ def download_file(url: str, dest: Path, force: bool = False) -> Path:
 
     with requests.get(url, stream=True, timeout=120, headers=headers, allow_redirects=True) as resp:
         resp.raise_for_status()
-        total = int(resp.headers.get("content-length", 0))
         downloaded = 0
         with open(dest, "wb") as fh:
             for chunk in resp.iter_content(chunk_size=65536):

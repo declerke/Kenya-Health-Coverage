@@ -11,8 +11,6 @@ from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
-from shapely.ops import transform
-import pyproj
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -30,10 +28,13 @@ GADM_LAYER = "ADM_ADM_1"
 
 
 def _compute_area_km2(gdf: gpd.GeoDataFrame) -> pd.Series:
-    """Reproject to a local equal-area CRS and compute polygon area in km²."""
-    # Africa Albers Equal Area Conic (EPSG:102022 / custom)
-    # Simpler: use UTM zone 37S which covers most of Kenya
-    gdf_utm = gdf.to_crs("EPSG:32737")
+    """Reproject to UTM Zone 37N (EPSG:32637) and compute polygon area in km².
+
+    Kenya spans UTM Zone 36N–37N; 37N (EPSG:32637) covers the majority of the
+    country including all counties east of ~34°E.  Using 37N rather than 37S
+    (EPSG:32737) is correct because Kenya is largely north of the equator.
+    """
+    gdf_utm = gdf.to_crs("EPSG:32637")
     return gdf_utm.geometry.area / 1_000_000  # m² → km²
 
 
@@ -67,8 +68,8 @@ def load_counties(force_download: bool = False) -> gpd.GeoDataFrame:
     # Compute area
     gdf["area_km2"] = _compute_area_km2(gdf)
 
-    # Compute centroids in WGS84
-    gdf_utm = gdf.to_crs("EPSG:32737")
+    # Compute centroids in WGS84 — project to UTM 37N, get centroid, reproject back
+    gdf_utm = gdf.to_crs("EPSG:32637")
     centroids_utm = gdf_utm.geometry.centroid
     centroids_wgs = centroids_utm.to_crs("EPSG:4326")
     gdf["centroid_lat"] = centroids_wgs.y
@@ -89,7 +90,7 @@ def load_counties(force_download: bool = False) -> gpd.GeoDataFrame:
 
 def write_to_duckdb(gdf: gpd.GeoDataFrame) -> None:
     """Write county GeoDataFrame to DuckDB raw_counties table."""
-    df = gdf[["county_name", "area_km2", "centroid_lat", "centroid_lon", "geometry_wkt"]].copy()
+    df = gdf[["county_name", "area_km2", "centroid_lat", "centroid_lon", "geometry_wkt"]]
 
     conn = get_conn()
     conn.execute("DROP TABLE IF EXISTS raw_counties")
